@@ -5,22 +5,27 @@ import re
 # https://github.com/newAM/monitorcontrol
 
 
-VERBOSE = False
-# VERBOSE = True
-input_sources = ['DVI1' , 'ANALOG1']
+# VERBOSE = False
+VERBOSE = True
+# input_sources = ['DVI1' , 'ANALOG1']
+# input_sources = ['DVI1' , 'DVI2']
+#dont know why but for some reason from DV1 we need to jump to HDMI1 and then from HDMI1 we need to jump to DVI2
+input_sources = [{'from':'DVI1' , 'to':'HDMI1'},{'from':'DVI2' , 'to':'DVI1'}]
 input_name_pattern = re.compile(r'InputSource\.(.*)')
 
 main_monitor_input_source = 'InputSource.DVI1'
 for monitor in get_monitors():
     with monitor:
         try:
+            # print(str(monitor.get_input_source()))
             val = input_name_pattern.search(str(monitor.get_input_source())).group(1)
-            idx = input_sources.index(val)
             if(VERBOSE): print(val)
-            size = len(input_sources)
-            next_idx = (idx + 1) % size
-            if(VERBOSE): print(input_sources[next_idx])
-            monitor.set_input_source(input_sources[next_idx])
+            # idx = input_sources.index(val)
+            # size = len(input_sources)
+            # next_idx = (idx + 1) % size
+            next_input = next((x for x in input_sources if x['from'] == val), None)['to']
+            if(VERBOSE): print(next_input)
+            monitor.set_input_source(next_input)
         except Exception as e: 
             if(VERBOSE): print(e)
             continue

@@ -1,5 +1,5 @@
 @echo off
-cd C:\Users\user\Documents\My Documents\logseq
+cd C:\Users\jwolf\Documents\logseq
 git checkout desktop
 git add -A
 git commit -m "auto-script commit"

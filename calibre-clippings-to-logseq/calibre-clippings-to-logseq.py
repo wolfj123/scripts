@@ -1,5 +1,6 @@
 from datetime import datetime
 import sys
+import os
 
 class Clipping:
     def __init__(self, book_title, author, page, location_start, location_end, date, text, note):
@@ -84,14 +85,35 @@ def parse_highlight_file(filename):
 
     return clippings
 
+
+def separate_clippings_by_book(clippings):
+    """Separates a list of clippings into a dictionary where keys are book titles and values are lists of clippings for that book.
+
+    Args:
+        clippings: A list of Clipping objects.
+
+    Returns:
+        A dictionary where keys are book titles and values are lists of Clipping objects for that book.
+    """
+    books = {}
+    for clipping in clippings:
+        book_title = clipping.book_title
+        if book_title not in books:
+            books[book_title] = []
+        books[book_title].append(clipping)
+    return books
+
+
 # MAIN
 args = sys.argv.copy()
 args.pop(0)
 
-clippings_file_name = "test.txt"
-output_file_name = clippings_file_name + 'logseq.md'
 
-clippings = parse_highlight_file(clippings_file_name)
+# clippings_file_name, clippings_file_extension = os.path.splitext(args[0]) 
+clippings_file_name, clippings_file_extension = os.path.splitext("test.txt") 
+output_file_name = clippings_file_name + '_to_logseq.md'
+
+clippings = parse_highlight_file(clippings_file_name + clippings_file_extension)
 
 for clipping in clippings:
     print(f"Book: {clipping.book_title} by {clipping.author}")
@@ -100,3 +122,17 @@ for clipping in clippings:
     print(f"Text:\n{clipping.text}")
     print(f"Note:\n{clipping.note}")
     print("----------")
+
+separated_by_book = separate_clippings_by_book(clippings)
+
+sub_block_new_line = "\n\t\t  "
+with open(output_file_name, 'wb+') as out_file:
+    for book_title, book_clippings in separated_by_book.items():
+        print(book_title)
+        logseq_block = "\t- # [[Reference Notes]] for [[{book_title}]]\n\t\t- source::\n\t\t  url::\n\t\t- ## References:".format(book_title = book_title)
+        logseq_sub_block_format = "\n\t\t\t- **Text**:\n\t\t\t  #+BEGIN_QUOTE\n\t\t\t  {text}\n\t\t\t  #+END_QUOTE\n\n\t\t\t  **Note**:\n\t\t\t  *{note}*\n\n\t\t\t  **Page**: {page}\n\t\t\t  **Location**: {location_start} - {location_end}\n\t\t\t  ---"
+        for clipping in book_clippings:
+
+            logseq_sub_block = logseq_sub_block_format.format(book_title, text = clipping.text.replace("\n", "\n\t\t\t  "), note = clipping.note, page = clipping.page, location_start = clipping.location_start, location_end = clipping.location_end)
+            logseq_block += (logseq_sub_block)
+    out_file.write(logseq_block.encode())

@@ -12,7 +12,7 @@ CONSTRAST_MIN = 0
 STEP_SIZE = 10
 
 # VERBOSE = True
-input_sources = ['DVI1' , 'ANALOG1']
+input_sources = ['DP1' , 'ANALOG1']
 input_name_pattern = re.compile(r'InputSource\.(.*)')
 
 args = sys.argv.copy()

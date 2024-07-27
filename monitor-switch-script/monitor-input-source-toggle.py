@@ -10,10 +10,10 @@ VERBOSE = True
 # input_sources = ['DVI1' , 'ANALOG1']
 # input_sources = ['DVI1' , 'DVI2']
 #dont know why but for some reason from DV1 we need to jump to HDMI1 and then from HDMI1 we need to jump to DVI2
-input_sources = [{'from':'DVI1' , 'to':'HDMI1'},{'from':'DVI2' , 'to':'DVI1'}]
+input_sources = [{'from':'DP1' , 'to':'HDMI1'},{'from':'HDMI1' , 'to':'DP1'}]
 input_name_pattern = re.compile(r'InputSource\.(.*)')
 
-main_monitor_input_source = 'InputSource.DVI1'
+main_monitor_input_source = 'InputSource.DP1'
 for monitor in get_monitors():
     with monitor:
         try:
@@ -32,25 +32,4 @@ for monitor in get_monitors():
 
 
 
-
-
-# for monitor in get_monitors():
-#     with monitor:
-#         print(monitor)
-
-
-# for monitor in get_monitors():
-#     with monitor:
-#         print(monitor.get_input_source())
-
-
-
-# for monitor in get_monitors():
-#     with monitor:
-#         print(monitor.get_contrast())
-
-
-# for monitor in get_monitors():
-#     with monitor:
-#         print(monitor.get_luminance())
 
